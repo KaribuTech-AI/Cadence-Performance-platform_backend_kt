@@ -1,0 +1,103 @@
+﻿API_ID,Module,HTTP_Method,Endpoint,Description,Required_Role,Request_DTO,Response_DTO,Expected_Status_Codes,Pagination
+AUTH-001,Authentication,POST,/api/v1/auth/login,Authenticate a user and issue access and refresh tokens.,Public,LoginRequest,TokenResponse,"200, 400, 401",No
+AUTH-002,Authentication,POST,/api/v1/auth/refresh,Issue a new access token using a valid refresh token.,Public,RefreshTokenRequest,TokenResponse,"200, 401",No
+AUTH-003,Authentication,POST,/api/v1/auth/logout,Revoke the current user session.,Authenticated,LogoutRequest,MessageResponse,"200, 401",No
+AUTH-004,Authentication,GET,/api/v1/auth/me,"Return the authenticated user's profile, roles and permissions.",Authenticated,,UserSessionResponse,"200, 401",No
+AUTH-005,Authentication,POST,/api/v1/auth/forgot-password,Request a password-reset notification.,Public,ForgotPasswordRequest,MessageResponse,"202, 400",No
+AUTH-006,Authentication,POST,/api/v1/auth/reset-password,Reset a password using a valid reset token.,Public,ResetPasswordRequest,MessageResponse,"200, 400, 401",No
+ORG-001,Organisation,GET,/api/v1/organisations,List organisations available to the current administrator.,Platform Admin,,PagedOrganisationResponse,"200, 401, 403",Yes
+ORG-002,Organisation,POST,/api/v1/organisations,Create an organisation.,Platform Admin,OrganisationCreateRequest,OrganisationResponse,"201, 400, 409",No
+ORG-003,Organisation,GET,/api/v1/organisations/{organisationId},Get organisation details.,Organisation Admin,,OrganisationResponse,"200, 404",No
+ORG-004,Organisation,PATCH,/api/v1/organisations/{organisationId},Update organisation settings.,Organisation Admin,OrganisationUpdateRequest,OrganisationResponse,"200, 400, 404",No
+ORG-005,Organisation Units,GET,/api/v1/organisations/{organisationId}/units,List the organisation hierarchy.,HR Admin,,OrganisationUnitTreeResponse,"200, 404",Yes
+ORG-006,Organisation Units,POST,/api/v1/organisations/{organisationId}/units,"Create a division, department, team or business unit.",HR Admin,OrganisationUnitCreateRequest,OrganisationUnitResponse,"201, 400, 409",No
+ORG-007,Organisation Units,PATCH,/api/v1/units/{unitId},Update an organisational unit.,HR Admin,OrganisationUnitUpdateRequest,OrganisationUnitResponse,"200, 400, 404",No
+ORG-008,Positions,GET,/api/v1/positions,Search and list positions.,HR Admin,,PagedPositionResponse,200,Yes
+ORG-009,Positions,POST,/api/v1/positions,Create a position.,HR Admin,PositionCreateRequest,PositionResponse,"201, 400, 409",No
+ORG-010,Job Grades,GET,/api/v1/job-grades,List job grades.,HR Admin,,JobGradeListResponse,200,No
+ORG-011,Job Grades,POST,/api/v1/job-grades,Create a job grade.,HR Admin,JobGradeCreateRequest,JobGradeResponse,"201, 400, 409",No
+USR-001,Users,GET,/api/v1/users,Search and list users.,HR Admin,,PagedUserResponse,200,Yes
+USR-002,Users,POST,/api/v1/users,Create an employee user account.,HR Admin,UserCreateRequest,UserResponse,"201, 400, 409",No
+USR-003,Users,GET,/api/v1/users/{userId},Get a user's profile and organisational assignment.,Authenticated,,UserResponse,"200, 403, 404",No
+USR-004,Users,PATCH,/api/v1/users/{userId},Update a user's account and profile.,HR Admin,UserUpdateRequest,UserResponse,"200, 400, 404",No
+USR-005,Users,PATCH,/api/v1/users/{userId}/status,"Activate, deactivate or archive a user.",HR Admin,UserStatusRequest,UserResponse,"200, 400, 404",No
+USR-006,Users,PUT,/api/v1/users/{userId}/manager,Assign or change an employee's manager.,HR Admin,ManagerAssignmentRequest,EmployeeProfileResponse,"200, 400, 404",No
+RBAC-001,Access Control,GET,/api/v1/roles,List roles.,Organisation Admin,,RoleListResponse,200,No
+RBAC-002,Access Control,POST,/api/v1/roles,Create a custom role.,Organisation Admin,RoleCreateRequest,RoleResponse,"201, 400, 409",No
+RBAC-003,Access Control,GET,/api/v1/permissions,List available permissions.,Organisation Admin,,PermissionListResponse,200,No
+RBAC-004,Access Control,PUT,/api/v1/roles/{roleId}/permissions,Replace permissions assigned to a role.,Organisation Admin,RolePermissionRequest,RoleResponse,"200, 400, 404",No
+RBAC-005,Access Control,POST,/api/v1/users/{userId}/roles,Assign a role and access scope to a user.,Organisation Admin,UserRoleAssignmentRequest,UserRoleResponse,"201, 400, 409",No
+RBAC-006,Access Control,DELETE,/api/v1/users/{userId}/roles/{userRoleId},Remove a role assignment.,Organisation Admin,,,"204, 404",No
+CYC-001,Review Cycles,GET,/api/v1/review-cycles,List review cycles with status and completion metrics.,HR Admin,,PagedReviewCycleResponse,200,Yes
+CYC-002,Review Cycles,POST,/api/v1/review-cycles,Create a performance review cycle.,HR Admin,ReviewCycleCreateRequest,ReviewCycleResponse,"201, 400",No
+CYC-003,Review Cycles,GET,/api/v1/review-cycles/{cycleId},Get a review cycle and its phases.,Authenticated,,ReviewCycleDetailResponse,"200, 403, 404",No
+CYC-004,Review Cycles,PATCH,/api/v1/review-cycles/{cycleId},Update a draft or scheduled cycle.,HR Admin,ReviewCycleUpdateRequest,ReviewCycleResponse,"200, 400, 404",No
+CYC-005,Review Cycles,POST,/api/v1/review-cycles/{cycleId}/launch,Launch a review cycle and create participant tasks.,HR Admin,CycleLaunchRequest,CycleLaunchResponse,"202, 400, 409",No
+CYC-006,Review Cycles,POST,/api/v1/review-cycles/{cycleId}/close,Close a completed review cycle.,HR Admin,CycleCloseRequest,ReviewCycleResponse,"200, 400, 409",No
+CYC-007,Review Cycles,GET,/api/v1/review-cycles/{cycleId}/participants,List cycle participants and completion status.,HR Admin,,PagedCycleParticipantResponse,"200, 404",Yes
+CYC-008,Review Cycles,POST,/api/v1/review-cycles/{cycleId}/participants,Add employees or units to a cycle.,HR Admin,CycleParticipantBulkRequest,BulkOperationResponse,"202, 400",No
+CYC-009,Review Cycles,PUT,/api/v1/review-cycles/{cycleId}/phases,Create or replace the ordered cycle phases.,HR Admin,CyclePhaseListRequest,CyclePhaseListResponse,"200, 400",No
+GOL-001,Goals and OKRs,GET,/api/v1/goals,Search goals visible to the current user.,Authenticated,,PagedGoalResponse,200,Yes
+GOL-002,Goals and OKRs,POST,/api/v1/goals,Create a goal or objective.,Employee,GoalCreateRequest,GoalResponse,"201, 400",No
+GOL-003,Goals and OKRs,GET,/api/v1/goals/{goalId},Get a goal with key results and updates.,Authenticated,,GoalDetailResponse,"200, 403, 404",No
+GOL-004,Goals and OKRs,PATCH,/api/v1/goals/{goalId},Update a goal.,Goal Owner,GoalUpdateRequest,GoalResponse,"200, 400, 403, 404",No
+GOL-005,Goals and OKRs,POST,/api/v1/goals/{goalId}/submit,Submit a goal for manager approval.,Goal Owner,,GoalResponse,"200, 400, 409",No
+GOL-006,Goals and OKRs,POST,/api/v1/goals/{goalId}/approve,Approve or reject a submitted goal.,Manager,GoalDecisionRequest,GoalResponse,"200, 400, 403",No
+GOL-007,Goals and OKRs,POST,/api/v1/goals/{goalId}/updates,Record a progress update.,Goal Owner,GoalProgressUpdateRequest,GoalUpdateResponse,"201, 400",No
+GOL-008,Goals and OKRs,POST,/api/v1/goals/{goalId}/key-results,Add a key result.,Goal Owner,KeyResultCreateRequest,KeyResultResponse,"201, 400",No
+GOL-009,Goals and OKRs,PATCH,/api/v1/key-results/{keyResultId},Update a key result and current metric value.,Goal Owner,KeyResultUpdateRequest,KeyResultResponse,"200, 400, 404",No
+GOL-010,Goals and OKRs,GET,/api/v1/users/{userId}/goal-summary,Get goal progress and completion metrics for an employee.,Employee or Manager,,GoalSummaryResponse,"200, 403, 404",No
+TPL-001,Review Templates,GET,/api/v1/review-templates,List review templates.,HR Admin,,PagedReviewTemplateResponse,200,Yes
+TPL-002,Review Templates,POST,/api/v1/review-templates,Create a review template.,HR Admin,ReviewTemplateCreateRequest,ReviewTemplateResponse,"201, 400",No
+TPL-003,Review Templates,GET,/api/v1/review-templates/{templateId},"Get template details, competencies and weights.",HR Admin,,ReviewTemplateDetailResponse,"200, 404",No
+TPL-004,Review Templates,PATCH,/api/v1/review-templates/{templateId},Update template settings and weights.,HR Admin,ReviewTemplateUpdateRequest,ReviewTemplateResponse,"200, 400, 404",No
+CMP-001,Competencies,GET,/api/v1/competencies,Search the competency library.,Authenticated,,PagedCompetencyResponse,200,Yes
+CMP-002,Competencies,POST,/api/v1/competencies,Create a competency.,HR Admin,CompetencyCreateRequest,CompetencyResponse,"201, 400, 409",No
+CMP-003,Rating Scales,GET,/api/v1/rating-scales,List rating scales and values.,HR Admin,,RatingScaleListResponse,200,No
+CMP-004,Rating Scales,POST,/api/v1/rating-scales,Create a rating scale.,HR Admin,RatingScaleCreateRequest,RatingScaleResponse,"201, 400",No
+REV-001,Reviews,GET,/api/v1/reviews,List reviews assigned to or visible to the current user.,Authenticated,,PagedReviewResponse,200,Yes
+REV-002,Reviews,GET,/api/v1/reviews/{reviewId},"Get review form, scores and comments.",Review Participant,,ReviewDetailResponse,"200, 403, 404",No
+REV-003,Reviews,PATCH,/api/v1/reviews/{reviewId},Save review scores and comments as a draft.,Reviewer,ReviewSaveRequest,ReviewResponse,"200, 400, 403",No
+REV-004,Reviews,POST,/api/v1/reviews/{reviewId}/submit,Submit a completed review.,Reviewer,ReviewSubmitRequest,ReviewResponse,"200, 400, 409",No
+REV-005,Reviews,POST,/api/v1/reviews/{reviewId}/approve,"Approve, reject or return a review.",Approver,ReviewDecisionRequest,ReviewResponse,"200, 400, 403",No
+REV-006,Reviews,GET,/api/v1/users/{userId}/performance-summary,Get consolidated completed-review results.,"Employee, Manager or HR",,PerformanceSummaryResponse,"200, 403, 404",No
+FDB-001,360 Feedback,GET,/api/v1/feedback/requests,List feedback requests sent to or by the current user.,Authenticated,,PagedFeedbackRequestResponse,200,Yes
+FDB-002,360 Feedback,POST,/api/v1/feedback/requests,Request feedback from one or more reviewers.,Employee or Manager,FeedbackRequestCreateRequest,BulkOperationResponse,"202, 400",No
+FDB-003,360 Feedback,GET,/api/v1/feedback/requests/{requestId},Get a feedback questionnaire.,Feedback Provider,,FeedbackRequestDetailResponse,"200, 403, 404",No
+FDB-004,360 Feedback,POST,/api/v1/feedback/requests/{requestId}/responses,Submit questionnaire responses.,Feedback Provider,FeedbackSubmissionRequest,FeedbackSubmissionResponse,"201, 400, 409",No
+FDB-005,360 Feedback,GET,/api/v1/users/{userId}/feedback-summary,Get aggregated feedback with anonymity controls.,"Employee, Manager or HR",,FeedbackSummaryResponse,"200, 403",No
+CHK-001,Check-ins,GET,/api/v1/checkins,List employee-manager check-ins.,Authenticated,,PagedCheckinResponse,200,Yes
+CHK-002,Check-ins,POST,/api/v1/checkins,Schedule a check-in.,Employee or Manager,CheckinCreateRequest,CheckinResponse,"201, 400",No
+CHK-003,Check-ins,GET,/api/v1/checkins/{checkinId},Get check-in notes and action items.,Check-in Participant,,CheckinDetailResponse,"200, 403, 404",No
+CHK-004,Check-ins,PATCH,/api/v1/checkins/{checkinId},Update check-in notes and completion state.,Check-in Participant,CheckinUpdateRequest,CheckinResponse,"200, 400, 403",No
+CHK-005,Check-ins,POST,/api/v1/checkins/{checkinId}/action-items,Add a check-in action item.,Check-in Participant,ActionItemCreateRequest,ActionItemResponse,"201, 400",No
+CAL-001,Calibration,GET,/api/v1/calibration/sessions,List calibration sessions.,HR or People Leader,,PagedCalibrationSessionResponse,200,Yes
+CAL-002,Calibration,POST,/api/v1/calibration/sessions,Create a calibration session.,HR Admin,CalibrationSessionCreateRequest,CalibrationSessionResponse,"201, 400",No
+CAL-003,Calibration,GET,/api/v1/calibration/sessions/{sessionId},"Get the nine-box grid, participants and distributions.",Calibration Participant,,CalibrationSessionDetailResponse,"200, 403, 404",No
+CAL-004,Calibration,PUT,/api/v1/calibration/sessions/{sessionId}/employees/{employeeId},"Set performance, potential, nine-box position and final rating.",Calibration Participant,CalibrationResultRequest,CalibrationResultResponse,"200, 400, 403",No
+CAL-005,Calibration,POST,/api/v1/calibration/sessions/{sessionId}/complete,Complete and lock a calibration session.,Facilitator,CalibrationCompleteRequest,CalibrationSessionResponse,"200, 400, 409",No
+CAL-006,Calibration,GET,/api/v1/review-cycles/{cycleId}/distribution,Get actual versus target rating distribution.,HR or People Leader,,RatingDistributionResponse,"200, 404",No
+EVD-001,Evidence,POST,/api/v1/evidence,Upload or register supporting evidence metadata.,Authenticated,Multipart EvidenceCreateRequest,EvidenceResponse,"201, 400",No
+EVD-002,Evidence,GET,/api/v1/entities/{entityType}/{entityId}/evidence,List evidence attached to an entity.,Authenticated,,EvidenceListResponse,"200, 403",No
+EVD-003,Evidence,DELETE,/api/v1/evidence/{evidenceId},Delete evidence owned by the user or administrator.,Owner or HR Admin,,,"204, 403, 404",No
+COM-001,Comments,GET,/api/v1/entities/{entityType}/{entityId}/comments,"List comments for a goal, review, check-in or task.",Authenticated,,CommentListResponse,"200, 403",Yes
+COM-002,Comments,POST,/api/v1/entities/{entityType}/{entityId}/comments,Add a comment.,Authenticated,CommentCreateRequest,CommentResponse,"201, 400",No
+TSK-001,Workflow Tasks,GET,/api/v1/tasks,List tasks assigned to the current user.,Authenticated,,PagedWorkflowTaskResponse,200,Yes
+TSK-002,Workflow Tasks,GET,/api/v1/tasks/{taskId},Get task details and history.,Task Assignee or Admin,,WorkflowTaskDetailResponse,"200, 403, 404",No
+TSK-003,Workflow Tasks,POST,/api/v1/tasks/{taskId}/complete,Complete a workflow task.,Task Assignee,TaskCompletionRequest,WorkflowTaskResponse,"200, 400, 409",No
+TSK-004,Workflow Tasks,POST,/api/v1/tasks/{taskId}/reassign,Reassign a workflow task.,Manager or HR Admin,TaskReassignmentRequest,WorkflowTaskResponse,"200, 400, 403",No
+NOT-001,Notifications,GET,/api/v1/notifications,List notifications for the current user.,Authenticated,,PagedNotificationResponse,200,Yes
+NOT-002,Notifications,PATCH,/api/v1/notifications/{notificationId}/read,Mark a notification as read.,Notification Owner,,NotificationResponse,"200, 404",No
+NOT-003,Notifications,POST,/api/v1/notifications/read-all,Mark all current-user notifications as read.,Authenticated,,MessageResponse,200,No
+ANA-001,Analytics,GET,/api/v1/analytics/dashboard,Get command-centre KPI metrics.,HR or People Leader,,DashboardResponse,200,No
+ANA-002,Analytics,GET,/api/v1/analytics/cycles/{cycleId}/completion,Get cycle and organisational-unit completion metrics.,HR or People Leader,,CycleCompletionAnalyticsResponse,"200, 404",No
+ANA-003,Analytics,GET,/api/v1/analytics/performance-distribution,Get performance-rating distribution with filters.,HR or People Leader,,PerformanceDistributionResponse,200,No
+ANA-004,Analytics,GET,/api/v1/analytics/competency-heatmap,"Get competency scores by team, division or job grade.",HR or People Leader,,CompetencyHeatmapResponse,200,No
+ANA-005,Analytics,POST,/api/v1/reports/exports,"Request a CSV, XLSX or PDF report export.",HR or People Leader,ReportExportRequest,ReportExportResponse,"202, 400",No
+ANA-006,Analytics,GET,/api/v1/reports/exports/{exportId},Get report-export status and download reference.,Export Requester,,ReportExportResponse,"200, 403, 404",No
+AI-001,AI Insights,GET,/api/v1/users/{userId}/ai-insights,List AI-generated performance insights.,"Employee, Manager or HR",,AIInsightListResponse,"200, 403",Yes
+AI-002,AI Insights,POST,/api/v1/users/{userId}/ai-insights/generate,Generate performance observations and development recommendations.,Manager or HR,AIInsightGenerationRequest,AIInsightGenerationResponse,"202, 400, 403",No
+AUD-001,Audit,GET,/api/v1/audit-events,Search audit events.,Audit Admin,,PagedAuditEventResponse,200,Yes
+AUD-002,Audit,GET,/api/v1/audit-events/{auditId},Get detailed before-and-after audit values.,Audit Admin,,AuditEventDetailResponse,"200, 404",No
+AUD-003,Audit,GET,/api/v1/entities/{entityType}/{entityId}/audit-history,Get the audit history for a business entity.,Audit Admin,,AuditEventListResponse,200,Yes
+HLT-001,Platform,GET,/api/v1/health,Return service health and dependency status.,Public,,HealthResponse,"200, 503",No
