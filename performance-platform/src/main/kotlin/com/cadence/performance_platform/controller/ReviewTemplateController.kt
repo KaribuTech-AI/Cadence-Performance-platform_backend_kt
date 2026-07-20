@@ -2,8 +2,10 @@ package com.cadence.performance_platform.controller
 
 import com.cadence.performance_platform.dto.*
 import com.cadence.performance_platform.service.ReviewTemplateService
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.*
 import java.util.UUID
 
@@ -16,7 +18,7 @@ class ReviewTemplateController(private val templateService: ReviewTemplateServic
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int
     ): ResponseEntity<PagedReviewTemplateResponse> {
-        return ResponseEntity.ok(templateService.getReviewTemplates(page, size))
+        return ok(templateService.getReviewTemplates(page, size))
     }
 
     @PostMapping
@@ -30,7 +32,7 @@ class ReviewTemplateController(private val templateService: ReviewTemplateServic
     fun getTemplateById(
         @PathVariable templateId: UUID
     ): ResponseEntity<ReviewTemplateResponse> {
-        return ResponseEntity.ok(templateService.getTemplateById(templateId))
+        return ok(templateService.getTemplateById(templateId))
     }
 
     @DeleteMapping("/{templateId}")
@@ -40,4 +42,6 @@ class ReviewTemplateController(private val templateService: ReviewTemplateServic
         templateService.deleteTemplate(templateId)
         return ResponseEntity.noContent().build()
     }
+
+
 }

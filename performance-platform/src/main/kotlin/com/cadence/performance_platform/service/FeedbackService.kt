@@ -8,39 +8,65 @@ import java.util.UUID
 @Service
 class FeedbackService {
 
-    fun getUserFeedbackWall(userId: UUID, page: Int, size: Int): PagedFeedbackResponse {
-        val mockFeedback = FeedbackResponse(
-            feedbackId = UUID.randomUUID(),
-            senderId = UUID.randomUUID(),
-            receiverId = userId,
-            message = "Incredible work decoupling the entity layers on the new Spring components! Saved us massive refactoring debt.",
-            visibility = "PUBLIC",
-            badgeType = "INNOVATION",
-            createdAt = OffsetDateTime.now()
+    fun listFeedbackRequests(page: Int, size: Int): PagedFeedbackRequestResponse {
+        val mockSummary = FeedbackRequestSummaryResponse(
+            requestId = UUID.randomUUID(),
+            targetUserName = "John Doe",
+            reviewerName = "Jane Smith",
+            status = "PENDING",
+            deadline = OffsetDateTime.now().plusDays(14)
         )
-        return PagedFeedbackResponse(
-            content = listOf(mockFeedback),
-            totalElements = 1,
-            totalPages = 1,
-            pageNumber = page,
-            pageSize = size
+        return PagedFeedbackRequestResponse(listOf(mockSummary), 1, 1, page, size)
+    }
+
+    fun requestFeedback(request: FeedbackRequestCreateRequest): BulkOperationResponse {
+        return BulkOperationResponse(
+            operationId = UUID.randomUUID(),
+            status = "ACCEPTED",
+            affectedRecordsCount = request.reviewerIds.size,
+            message = "360 feedback requests generated successfully for processing."
         )
     }
 
-    fun sendFeedback(senderId: UUID, request: FeedbackCreateRequest): FeedbackResponse {
-        return FeedbackResponse(
-            feedbackId = UUID.randomUUID(),
-            senderId = senderId,
-            receiverId = request.receiverId,
-            message = request.message,
-            visibility = request.visibility,
-            badgeType = request.badgeType,
-            createdAt = OffsetDateTime.now()
+    fun getQuestionnaire(requestId: UUID): FeedbackRequestDetailResponse {
+        val mockQuestion = FeedbackQuestionResponse(
+            questionId = UUID.randomUUID(),
+            type = "SCALE",
+            prompt = "How effectively does this individual collaborate across cross-functional engineering teams?",
+            section = "COLLABORATION",
+            isRequired = true
+        )
+        return FeedbackRequestDetailResponse(
+            requestId = requestId,
+            targetUserId = UUID.randomUUID(),
+            requestorId = UUID.randomUUID(),
+            templateId = UUID.randomUUID(),
+            templateName = "Q3 Engineering Core Competencies",
+            status = "PENDING",
+            deadline = OffsetDateTime.now().plusDays(7),
+            questions = listOf(mockQuestion)
         )
     }
 
-    fun deleteFeedback(feedbackId: UUID) {
-        // Mock cleanup execution sequence for modern platform content curation
+    fun submitFeedback(requestId: UUID, request: FeedbackSubmissionRequest): FeedbackSubmissionResponse {
+        return FeedbackSubmissionResponse(
+            submissionId = UUID.randomUUID(),
+            requestId = requestId,
+            status = "SUBMITTED",
+            submittedAt = OffsetDateTime.now()
+        )
+    }
+
+    fun getAggregatedFeedback(userId: UUID): FeedbackSummaryResponse {
+        return FeedbackSummaryResponse(
+            userId = userId,
+            totalResponsesReceived = 4,
+            sectionAverages = mapOf("COLLABORATION" to 4.5, "TECHNICAL_SKILLS" to 4.8),
+            openEndedInsights = listOf(
+                "Demonstrates exceptional proficiency with architectural layouts.",
+                "Consistently drives tasks to completion ahead of cadence sprints."
+            ),
+            isAnonymityThresholdMet = true
+        )
     }
 }
-

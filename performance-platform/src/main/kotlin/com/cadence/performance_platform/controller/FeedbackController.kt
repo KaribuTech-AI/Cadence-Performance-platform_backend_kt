@@ -2,6 +2,7 @@ package com.cadence.performance_platform.controller
 
 import com.cadence.performance_platform.dto.*
 import com.cadence.performance_platform.service.FeedbackService
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -11,28 +12,34 @@ import java.util.UUID
 @RequestMapping("/api/v1")
 class FeedbackController(private val feedbackService: FeedbackService) {
 
-    @GetMapping("/users/{userId}/feedback")
-    fun getUserFeedback(
-        @PathVariable userId: UUID,
+    @GetMapping("/feedback/requests")
+    fun getFeedbackRequests(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int
-    ): ResponseEntity<PagedFeedbackResponse> {
-        return ResponseEntity.ok(feedbackService.getUserFeedbackWall(userId, page, size))
+    ): ResponseEntity<PagedFeedbackRequestResponse> {
+        return ResponseEntity.ok(feedbackService.listFeedbackRequests(page, size))
     }
 
-    @PostMapping("/feedback")
+    @PostMapping("/feedback/requests")
+    fun requestFeedback(@Valid @RequestBody request: FeedbackRequestCreateRequest): ResponseEntity<BulkOperationResponse> {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(feedbackService.requestFeedback(request))
+    }
+
+    @GetMapping("/feedback/requests/{requestId}")
+    fun getQuestionnaire(@PathVariable requestId: UUID): ResponseEntity<FeedbackRequestDetailResponse> {
+        return ResponseEntity.ok(feedbackService.getQuestionnaire(requestId))
+    }
+
+    @PostMapping("/feedback/requests/{requestId}/responses")
     fun submitFeedback(
-        @RequestHeader("X-User-Id") senderId: UUID, // Simplified identity transfer for skeleton testing
-        @RequestBody request: FeedbackCreateRequest
-    ): ResponseEntity<FeedbackResponse> {
-        return ResponseEntity.status(HttpStatus.CREATED).body(feedbackService.sendFeedback(senderId, request))
+        @PathVariable requestId: UUID,
+        @Valid @RequestBody request: FeedbackSubmissionRequest
+    ): ResponseEntity<FeedbackSubmissionResponse> {
+        return ResponseEntity.status(HttpStatus.CREATED).body(feedbackService.submitFeedback(requestId, request))
     }
 
-    @DeleteMapping("/feedback/{feedbackId}")
-    fun removeFeedback(
-        @PathVariable feedbackId: UUID
-    ): ResponseEntity<Void> {
-        feedbackService.deleteFeedback(feedbackId)
-        return ResponseEntity.noContent().build()
+    @GetMapping("/users/{userId}/feedback-summary")
+    fun getFeedbackSummary(@PathVariable userId: UUID): ResponseEntity<FeedbackSummaryResponse> {
+        return ResponseEntity.ok(feedbackService.getAggregatedFeedback(userId))
     }
 }
